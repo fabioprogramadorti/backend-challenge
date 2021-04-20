@@ -3,12 +3,17 @@ const cors = require('cors')
 import "core-js/stable"
 import "regenerator-runtime/runtime"
 import express from 'express'
+import { mongoDBConnection }  from './db/config'
+
+
 const app = express()
 
 import { json, urlencoded } from 'body-parser'
 
 app.use(urlencoded({ extended: true }))
 app.use(json())
+
+mongoDBConnection()
 
 // Configure Routes
 app.use('/', (req, res) => {

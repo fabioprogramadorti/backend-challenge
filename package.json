@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "babel -w src/ -d dist/ | nodemon --watch dist"
+    "dev": "babel -w src/ -d dist/ | nodemon --watch dist"
   },
   "repository": {
     "type": "git",
