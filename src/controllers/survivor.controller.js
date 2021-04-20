@@ -61,7 +61,7 @@ export async function deleteSurvivor(req, res) {
     const survivorExcluida = await SurvivorModel.findOneAndDelete({ _id: id })
     res.json({
       status: 'success',
-      msg: `survivor excluida`,
+      msg: `survivor deleted`,
       dados: survivorExcluida
     })
   } catch (err) {
