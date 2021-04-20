@@ -1,5 +1,10 @@
 import { Schema, model } from 'mongoose'
-
+const inventory = {
+  water: { type: Number, default: 0 },
+  food: { type: Number, default: 0 },
+  medication: { type: Number, default: 0 },
+  ammunition: { type: Number, default: 0 }
+}
 const survivor = {
   name: {
     type: String, 
@@ -21,10 +26,7 @@ const survivor = {
     long:{type: Number}
   },
   inventory:{
-    water: {type: Number, default: 0},
-    food: {type: Number, default: 0},
-    medication: {type: Number, default: 0},
-    ammunition: {type: Number, default: 0}
+    type: inventory, required: true,
   },
   infected: {
     type: Boolean,
