@@ -9,13 +9,13 @@ const STATUS = {
   error: 'error'
 }
 
-const itemBySurvivor = (survivors, item) => {
+const countItems = (survivors, item) => {
   let totalItem = survivors.reduce((acc, survivor) => {
 
     return acc + survivor.inventory[item]
   }, 0)
 
-  return totalItem / survivors.length
+  return totalItem 
 }
 
 export async function reportsController(req, res) {
@@ -24,17 +24,25 @@ export async function reportsController(req, res) {
     const infectedSurvivors = allSurvivors.filter(survivor => 
       survivor.infected
     )
-  
     const notInfected = allSurvivors.length - infectedSurvivors.length
-  
+
+    // percentages
     const infectedPercentage = infectedSurvivors.length * 100 / allSurvivors.length
     const notInfectedPercentage = notInfected * 100 / allSurvivors.length
-  
-    const avgWaterBySurvivor = itemBySurvivor(allSurvivors, 'water')
-    const avgFoodBySurvivor = itemBySurvivor(allSurvivors, 'food')
-    const avgMedicationBySurvivor = itemBySurvivor(allSurvivors, 'medication')
-    const avgAmmunitionBySurvivor = itemBySurvivor(allSurvivors, 'ammunition')
-  
+    
+    // average of items by survivor
+    const avgWaterBySurvivor = countItems(allSurvivors, 'water') / allSurvivors.length
+    const avgFoodBySurvivor = countItems(allSurvivors, 'food') / allSurvivors.length
+    const avgMedicationBySurvivor = countItems(allSurvivors, 'medication') / allSurvivors.length
+    const avgAmmunitionBySurvivor = countItems(allSurvivors, 'ammunition') / allSurvivors.length
+
+    const infectedWater = countItems(infectedSurvivors, 'water')
+    const infectedFood = countItems(infectedSurvivors, 'food')
+    const infectedMedication = countItems(infectedSurvivors, 'medication')
+    const infectedAmmunition = countItems(infectedSurvivors, 'ammunition')
+
+    const pointsLost = infectedWater * 4 + infectedFood * 3 + infectedMedication * 2 + infectedAmmunition * 1
+
     res.json({
       status: STATUS.success,
       infectedPercentage,
@@ -42,7 +50,8 @@ export async function reportsController(req, res) {
       avgWaterBySurvivor,
       avgFoodBySurvivor,
       avgMedicationBySurvivor,
-      avgAmmunitionBySurvivor
+      avgAmmunitionBySurvivor,
+      pointsLost
     })
   } catch (err) {
     res.json({
