@@ -1,9 +1,5 @@
 import { Schema, model } from 'mongoose'
 
-const coordinatesValid = (val) => {
-  return val.length == 2;
-}
-
 const survivor = {
   name: {
     type: String, 
@@ -21,11 +17,14 @@ const survivor = {
     uppercase: true,    
   },
   last_location: {
-    coordinates: {
-      type: [Number],
-      required: true, 
-      validate: [coordinatesValid, 'Invalid Coordinate. Must Have 2 numbers']
-    }
+    lat:{type: Number},
+    long:{type: Number}
+  },
+  inventory:{
+    water: {type: Number, default: 0},
+    food: {type: Number, default: 0},
+    medication: {type: Number, default: 0},
+    ammunition: {type: Number, default: 0}
   },
   infected: {
     type: Boolean,
