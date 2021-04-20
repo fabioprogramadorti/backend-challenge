@@ -1,14 +1,21 @@
 import SurvivorModel from '../db/models/survivor.model'
 
-
+const STATUS = {
+  success: 'success',
+  error: 'error'
+}
 export async function listSurvivors(req, res) {
   try{
     const allSurvivors = await SurvivorModel.find({})
-
-    res.json(allSurvivors)
+    
+    res.json({
+      status: STATUS.success,
+      qtd:allSurvivors.length,
+      survivors: allSurvivors
+    })
   } catch(err) {
     res.json({
-      status: 'error',
+      status: STATUS.error,      
       msg: err.message
     })
   }
@@ -17,10 +24,13 @@ export async function listSurvivors(req, res) {
 export async function createSurvivor(req, res) {
   try {
     const newSurvivor = await SurvivorModel.create(req.body)
-    res.json(newSurvivor)
+    res.json({
+      status: STATUS.success,
+      newSurvivor
+    })
   } catch(err) {
     res.json({
-      status: 'error',
+      status: STATUS.error,
       msg: err.message
     })
   }
@@ -30,10 +40,13 @@ export async function getSurvivorById(req, res) {
   const id = req.params.id
   try {
     const survivor = await SurvivorModel.findById(id)
-    res.json(survivor)
+    res.json({
+      status: STATUS.success,
+      survivor
+    })
   } catch (err) {
     res.json({
-      status: 'error',
+      status: STATUS.error,
       msg: err.message
     })
   }
@@ -50,10 +63,13 @@ export async function updateLocation(req, res) {
       { last_location: data.new_location }, 
       { new: true } // returns the modified object
     )
-    res.json(updatedSurvivor)
+    res.json({
+      status: STATUS.success,
+      updatedSurvivor
+    })
   } catch (err) {
     res.json({
-      status: 'error',
+      status: STATUS.error,
       msg: err.message
     })
   }
@@ -117,7 +133,7 @@ export async function updateInventory(req, res) {
       survivor2DB.save()
 
       res.json({
-        status: 'success',
+        status: STATUS.success,
         survivor1DB,
         survivor2DB
       })
@@ -127,7 +143,7 @@ export async function updateInventory(req, res) {
     
   } catch (err) {
     res.json({
-      status: 'error',
+      status: STATUS.error,
       msg: err.message
     })
   }
@@ -138,11 +154,11 @@ export async function updateInventory(req, res) {
 export async function deleteSurvivor(req, res) {
   const id = req.params.id
   try {
-    const survivorExcluida = await SurvivorModel.findOneAndDelete({ _id: id })
+    const deletedSurvivor = await SurvivorModel.findOneAndDelete({ _id: id })
     res.json({
-      status: 'success',
+      status: STATUS.success,
       msg: `survivor deleted`,
-      dados: survivorExcluida
+      dados: deletedSurvivor
     })
   } catch (err) {
     res.json({
