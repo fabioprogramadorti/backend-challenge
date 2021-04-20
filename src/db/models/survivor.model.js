@@ -8,19 +8,14 @@ const survivor = {
     trim: true
   }, 
   age:{
-    type: Number, required: true
+    type: Number, required: true, min: 0
   },
   gender:{
     type: String,
-    enum: ['male', 'female'],
+    enum: ['MALE', 'FEMALE'],
     required: true
   },
   last_location: {
-    type: {
-      type: String, 
-      enum: ['Point'], // 'location.type' must be 'Point'
-      required: true
-    },
     coordinates: {
       type: [Number],
       required: true
@@ -32,11 +27,13 @@ const survivor = {
   },
   reports: {
     type: Number,
-    max: 3
+    max: 3,
+    min: 0,
+    default: 0
   }
 
 }
 
 const SurvivorSchema = new Schema(survivor)
-
-export default SurviroModel = new model('survivor', SurvivorSchema)
+const SurvivorModel = new model('survivor', SurvivorSchema)
+export default SurvivorModel

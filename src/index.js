@@ -4,7 +4,7 @@ import "core-js/stable"
 import "regenerator-runtime/runtime"
 import express from 'express'
 import { mongoDBConnection }  from './db/config'
-
+import survivorRoutes from './routes/survivor.routes'
 
 const app = express()
 
@@ -17,12 +17,11 @@ app.use(json())
 mongoDBConnection()
 
 // Configure Routes
-app.use('/', (req, res) => {
-  res.send('Welcome survivor')
-})
+app.use('/survivor', survivorRoutes)
 
+
+// Listening
 const PORT = process.env.PORT || 3000
-
 app.listen(PORT, () => {
   console.log('listening on port', PORT)
 })
