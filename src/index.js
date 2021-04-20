@@ -13,6 +13,7 @@ import { json, urlencoded } from 'body-parser'
 app.use(urlencoded({ extended: true }))
 app.use(json())
 
+// Connection to cloud db server
 mongoDBConnection()
 
 // Configure Routes
