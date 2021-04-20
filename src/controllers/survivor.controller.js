@@ -90,6 +90,9 @@ export async function updateInventory(req, res) {
   let s1Data = req.body.s1 
   let s2Data = req.body.s2
   try {
+    if(s1Data.infected || s2Data.infected){
+      throw new Error('Survivor infected. Cannot make the transaction')
+    }
     // validations of the inventories
     const pointsS1 = calculatePoints(s1Data.items)
     const pointsS2 = calculatePoints(s2Data.items)
