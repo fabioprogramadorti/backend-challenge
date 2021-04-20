@@ -1,10 +1,12 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model, Types } from 'mongoose'
+
 const inventory = {
   water: { type: Number, default: 0 },
   food: { type: Number, default: 0 },
   medication: { type: Number, default: 0 },
   ammunition: { type: Number, default: 0 }
 }
+
 const survivor = {
   name: {
     type: String, 
@@ -26,19 +28,22 @@ const survivor = {
     long:{type: Number}
   },
   inventory:{
-    type: inventory, required: true,
+    type: inventory, 
+    required: true
   },
   infected: {
     type: Boolean,
     default: false
   },
-  reports: {
-    type: Number,
-    max: 3,
-    min: 0,
-    default: 0
+  reports: { 
+    type: [Types.ObjectId],
+    validate: [arrayLimit, '{PATH} exceeds the limit of 3']
   }
 
+}
+
+function arrayLimit(val) {
+  return val.length <= 3;
 }
 
 const SurvivorSchema = new Schema(survivor)

@@ -106,15 +106,15 @@ export async function updateInventory(req, res) {
   let s1Data = req.body.s1 
   let s2Data = req.body.s2
   try {
-    if(s1Data.infected || s2Data.infected){
+    const survivor1DB = await SurvivorModel.findById(s1Data.id)
+    const survivor2DB = await SurvivorModel.findById(s2Data.id)
+    if (survivor1DB.infected || survivor2DB.infected){
       throw new Error('Survivor infected. Cannot make the transaction')
     }
     // validations of the inventories
     const pointsS1 = calculatePoints(s1Data.items)
     const pointsS2 = calculatePoints(s2Data.items)
     
-    const survivor1DB = await SurvivorModel.findById(s1Data.id)
-    const survivor2DB = await SurvivorModel.findById(s2Data.id)
 
     const s1HasEnoughItems = hasEnoughItems(survivor1DB, s1Data.items)
     const s2HasEnoughItems = hasEnoughItems(survivor2DB, s2Data.items)
@@ -134,8 +134,8 @@ export async function updateInventory(req, res) {
 
       res.json({
         status: STATUS.success,
-        survivor1DB,
-        survivor2DB
+        s1: survivor1DB,
+        s2: survivor2DB
       })
     } else {
       throw new Error('Someone has not enough items or the points are not equivalent')
@@ -150,6 +150,43 @@ export async function updateInventory(req, res) {
 
 }
 
+export async function updateInfected(req, res) {
+  const informantId = req.body.informant
+  const infectedDenounced = req.body.infected
+  
+  try {
+    const informant = await SurvivorModel.findById(informantId)
+    const denounced = await SurvivorModel.findById(infectedDenounced)
+    if (denounced.reports.indexOf(informant._id) >= 0){
+      throw new Error('You already have reported this survivor')
+    }
+    if (denounced.infected){
+      throw new Error('This survivor has already been reported 3 times')
+    }
+    
+    denounced.reports.push(informant._id)
+    
+    if(denounced.reports.length >= 3){
+      denounced.infected = true
+    }
+    denounced.save()
+
+    res.json({
+      status: STATUS.success,
+      denounced: {
+        name: denounced.name,
+        reports: denounced.reports.length,
+        infected: denounced.infected
+      }
+    })
+  } catch (err) {
+    res.json({
+      status: 'error',
+      msg: err.message
+    })
+  }
+
+}
 
 export async function deleteSurvivor(req, res) {
   const id = req.params.id

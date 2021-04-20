@@ -5,7 +5,8 @@ import {
   updateLocation,
   deleteSurvivor,
   getSurvivorById,
-  updateInventory
+  updateInventory,
+  updateInfected
 } from '../controllers/survivor.controller'
 
 const router = Router()
@@ -13,6 +14,7 @@ const router = Router()
 // survivors endpoits 
 router.get('/', listSurvivors)
 router.post('/', createSurvivor)
+router.put('/infection-alert/', updateInfected)
 router.put('/trade/', updateInventory)
 router.put('/:id', updateLocation)
 router.delete('/:id', deleteSurvivor)
