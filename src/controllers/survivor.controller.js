@@ -39,13 +39,17 @@ export async function getSurvivorById(req, res) {
   }
 }
 
-export async function updateSurvivor(req, res) {
-  delete body.inventory
+export async function updateLocation(req, res) {
   const id = req.params.id
   let data = req.body
-  delete data.inventory
+
   try {
-    const updatedSurvivor = await SurvivorModel.findOneAndUpdate({_id:id}, data)
+    const updatedSurvivor = await SurvivorModel
+    .findOneAndUpdate(
+      { _id:id }, 
+      { last_location: data.new_location }, 
+      { new: true } // returns the modified object
+    )
     res.json(updatedSurvivor)
   } catch (err) {
     res.json({

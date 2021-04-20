@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { 
   createSurvivor, 
   listSurvivors, 
-  updateSurvivor,
+  updateLocation,
   deleteSurvivor,
   getSurvivorById 
 } from '../controllers/survivor.controller'
@@ -12,7 +12,7 @@ const router = Router()
 // survivors endpoits 
 router.get('/', listSurvivors)
 router.post('/', createSurvivor)
-router.put('/:id', updateSurvivor)
+router.put('/:id', updateLocation)
 router.delete('/:id', deleteSurvivor)
 router.get('/:id', getSurvivorById)
 
