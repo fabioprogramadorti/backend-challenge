@@ -14,7 +14,7 @@ const survivor = {
     type: String,
     enum: ['male', 'female'],
     required: true
-  }, 
+  },
   last_location: {
     type: {
       type: String, 
@@ -25,7 +25,16 @@ const survivor = {
       type: [Number],
       required: true
     }
+  },
+  infected: {
+    type: Boolean,
+    default: false
+  },
+  reports: {
+    type: Number,
+    max: 3
   }
+
 }
 
 const SurvivorSchema = new Schema(survivor)
