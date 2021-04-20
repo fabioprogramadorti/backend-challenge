@@ -5,6 +5,7 @@ import "regenerator-runtime/runtime"
 import express from 'express'
 import { mongoDBConnection }  from './db/config'
 import survivorRoutes from './routes/survivor.routes'
+import reportsRoutes from './routes/reports.routes'
 
 const app = express()
 
@@ -18,6 +19,7 @@ mongoDBConnection()
 
 // Configure Routes
 app.use('/survivor', survivorRoutes)
+app.use('/reports', reportsRoutes)
 
 
 // Listening
