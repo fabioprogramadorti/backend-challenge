@@ -21,20 +21,18 @@ const countItems = (survivors, item) => {
 export async function reportsController(req, res) {
   try {
     const allSurvivors = await SurvivorModel.find({})
-    const infectedSurvivors = allSurvivors.filter(survivor => 
-      survivor.infected
-    )
-    const notInfected = allSurvivors.length - infectedSurvivors.length
+    const infectedSurvivors = allSurvivors.filter(survivor => survivor.infected)
+    const notInfectedSurvivors = allSurvivors.filter(survivor => !survivor.infected)
 
     // percentages
     const infectedPercentage = infectedSurvivors.length * 100 / allSurvivors.length
-    const notInfectedPercentage = notInfected * 100 / allSurvivors.length
+    const notInfectedPercentage = notInfectedSurvivors.length * 100 / allSurvivors.length
     
     // average of items by survivor
-    const avgWaterBySurvivor = countItems(allSurvivors, 'water') / allSurvivors.length
-    const avgFoodBySurvivor = countItems(allSurvivors, 'food') / allSurvivors.length
-    const avgMedicationBySurvivor = countItems(allSurvivors, 'medication') / allSurvivors.length
-    const avgAmmunitionBySurvivor = countItems(allSurvivors, 'ammunition') / allSurvivors.length
+    const avgWaterBySurvivor = countItems(notInfectedSurvivors, 'water') / allSurvivors.length
+    const avgFoodBySurvivor = countItems(notInfectedSurvivors, 'food') / allSurvivors.length
+    const avgMedicationBySurvivor = countItems(notInfectedSurvivors, 'medication') / allSurvivors.length
+    const avgAmmunitionBySurvivor = countItems(notInfectedSurvivors, 'ammunition') / allSurvivors.length
 
     const infectedWater = countItems(infectedSurvivors, 'water')
     const infectedFood = countItems(infectedSurvivors, 'food')
