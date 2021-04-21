@@ -1,19 +1,15 @@
 import SurvivorModel from '../db/models/survivor.model'
 import { ITEMS_VALUES } from '../utils/constants'
-// 1. Percentage of infected survivors.
-// 1. Percentage of non - infected survivors.
-// 3. Average amount of each kind of resource by survivor(e.g. 5 waters per survivor)
-// 4. Points lost because of infected survivor.
 
 const STATUS = {
   success: 'success',
   error: 'error'
 }
 
-const countItems = (survivors, item) => {
-  let totalItem = survivors.reduce((acc, survivor) => {
+const totalItemOfSurvivor = (survivors, item) => {
+  let totalItem = survivors.reduce((total, survivor) => {
 
-    return acc + survivor.inventory[item]
+    return total + survivor.inventory[item]
   }, 0)
 
   return totalItem 
@@ -21,18 +17,20 @@ const countItems = (survivors, item) => {
 
 export async function reportsController(req, res) {
   try {
+    
+    // get survivors and filter by infection
     const allSurvivors = await SurvivorModel.find({})
     const infectedSurvivors = allSurvivors.filter(survivor => survivor.infected)
     const notInfectedSurvivors = allSurvivors.filter(survivor => !survivor.infected)
 
-    // percentages
+    // calculate percentages
     const infectedPercentage = infectedSurvivors.length * 100 / allSurvivors.length
     const notInfectedPercentage = notInfectedSurvivors.length * 100 / allSurvivors.length
     
-    // average of items by survivor
+    // calculate average of items by survivor
     const avgsBySurvivor = ITEMS_VALUES
       .map(item => {
-        let avg = countItems(notInfectedSurvivors, item.name) / allSurvivors.length
+        let avg = totalItemOfSurvivor(notInfectedSurvivors, item.name) / allSurvivors.length
         return {
           item: item.name,
           avg
@@ -40,8 +38,8 @@ export async function reportsController(req, res) {
       })
     
     // Sum points lost by infected survivors
-    const pointsLost = ITEMS_VALUES.reduce((acc, current) => {
-      return acc + countItems(infectedSurvivors, current.name) * current.value
+    const pointsLost = ITEMS_VALUES.reduce((total, current) => {
+      return total + totalItemOfSurvivor(infectedSurvivors, current.name) * current.value
     }, 0)
 
     res.json({
