@@ -1,5 +1,5 @@
 import SurvivorModel from '../db/models/survivor.model'
-
+import { ITEMS_VALUES } from '../utils/constants'
 const STATUS = {
   success: 'success',
   error: 'error'
@@ -77,12 +77,10 @@ export async function updateLocation(req, res) {
 
 function calculatePoints(items) {
 
-  const points = {
-    water: 4,
-    food: 3,
-    medication: 2,
-    ammunition: 1
-  }
+  let points = {}
+  ITEMS_VALUES.forEach(item => {
+    points[item.name] = item.value
+  })
 
   const totalPoints = items.reduce((acc, item) => {
     return points[item.name] * item.qtd + acc
@@ -111,31 +109,49 @@ export async function updateInventory(req, res) {
     if (survivor1DB.infected || survivor2DB.infected){
       throw new Error('Survivor infected. Cannot make the transaction')
     }
+
     // validations of the inventories
+
+    // Calculate total points of each survivor
     const pointsS1 = calculatePoints(s1Data.items)
     const pointsS2 = calculatePoints(s2Data.items)
-    
 
+    // check if the survivors have enough items to trade
     const s1HasEnoughItems = hasEnoughItems(survivor1DB, s1Data.items)
     const s2HasEnoughItems = hasEnoughItems(survivor2DB, s2Data.items)
     
+    // if the points are equal and both have enough items to trade the inventories are updated
     if (pointsS1 == pointsS2 && s1HasEnoughItems && s2HasEnoughItems) {
+      let inventory1 = survivor1DB.inventory
+      let inventory2 = survivor2DB.inventory
       // updateItems
       s1Data.items.forEach(item => {
-        survivor1DB.inventory[item.name] -= item.qtd
-        survivor2DB.inventory[item.name] += item.qtd
+        inventory1[item.name] -= item.qtd
+        inventory2[item.name] += item.qtd
       })
       s2Data.items.forEach(item => {
-        survivor2DB.inventory[item.name] -= item.qtd
-        survivor1DB.inventory[item.name] += item.qtd
+        inventory1[item.name] += item.qtd
+        inventory2[item.name] -= item.qtd
       })
-      survivor1DB.save()
-      survivor2DB.save()
+  
+      const survivor1Updated = await SurvivorModel
+        .findOneAndUpdate(
+          {_id: s1Data.id}, 
+          {inventory: inventory1}, 
+          {new:true}
+        )
+
+      const survivor2Updated = await SurvivorModel
+        .findOneAndUpdate(
+          {_id: s2Data.id}, 
+          {inventory: inventory2}, 
+          {new:true}
+        )
 
       res.json({
         status: STATUS.success,
-        s1: survivor1DB,
-        s2: survivor2DB
+        s1: survivor1Updated.inventory,
+        s2: survivor2Updated.inventory
       })
     } else {
       throw new Error('Someone has not enough items or the points are not equivalent')
