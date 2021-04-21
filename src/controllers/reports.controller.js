@@ -1,4 +1,5 @@
 import SurvivorModel from '../db/models/survivor.model'
+import { POINTS } from '../utils/constants'
 // 1. Percentage of infected survivors.
 // 1. Percentage of non - infected survivors.
 // 3. Average amount of each kind of resource by survivor(e.g. 5 waters per survivor)
@@ -29,10 +30,15 @@ export async function reportsController(req, res) {
     const notInfectedPercentage = notInfectedSurvivors.length * 100 / allSurvivors.length
     
     // average of items by survivor
-    const avgWaterBySurvivor = countItems(notInfectedSurvivors, 'water') / allSurvivors.length
-    const avgFoodBySurvivor = countItems(notInfectedSurvivors, 'food') / allSurvivors.length
-    const avgMedicationBySurvivor = countItems(notInfectedSurvivors, 'medication') / allSurvivors.length
-    const avgAmmunitionBySurvivor = countItems(notInfectedSurvivors, 'ammunition') / allSurvivors.length
+    const avgs = POINTS
+      .map(item => {
+        let avg = countItems(notInfectedSurvivors, item.name) / allSurvivors.length
+        return {
+          item: item.name,
+          avg
+        }
+      })
+    
 
     const infectedWater = countItems(infectedSurvivors, 'water')
     const infectedFood = countItems(infectedSurvivors, 'food')
@@ -45,10 +51,7 @@ export async function reportsController(req, res) {
       status: STATUS.success,
       infectedPercentage,
       notInfectedPercentage,
-      avgWaterBySurvivor,
-      avgFoodBySurvivor,
-      avgMedicationBySurvivor,
-      avgAmmunitionBySurvivor,
+      avgs,
       pointsLost
     })
   } catch (err) {
