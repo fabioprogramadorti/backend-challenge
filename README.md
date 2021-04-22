@@ -20,9 +20,11 @@ yarn dev #to run the server
 
 ## 🎲 Using the API
 
-**Creating survivor**
+## Creating survivor
 
 **_Path: /survivor_**
+
+If some item of the inventory is omitted the system assume the quantity is 0
 
 ```bash
 
@@ -44,6 +46,106 @@ curl --header "Content-Type: application/json" \
 	}
 }' \
   http://localhost:3000/survivor # local URL
+
+```
+
+## Listing Survivors
+
+**_Path: /survivor_**
+
+```bash
+curl --header "Content-Type: application/json" \
+  --request GET \
+  http://localhost:3000/survivor # local URL
+
+```
+
+## Update Location of a Survivor
+
+**_Path: /survivor_**
+
+```bash
+curl --header "Content-Type: application/json" \
+  --request PUT \
+  --data '{
+	"new_location": {
+		"lat": [latitude],
+		"long": [longitude]
+    }
+  }' \
+  http://localhost:3000/survivor/[id] # local URL - id stands for the user ID who will be updated
+```
+
+## Getting survivor by ID
+
+**_Path: /survivor/[id]_**
+
+```bash
+curl --header "Content-Type: application/json" \
+  --request GET \
+   http://localhost:3000/survivor/[id] # local URL - id stands for the user ID who will be called
+```
+
+## Removing a Survivor
+
+**_Path: /survivor/[id]_**
+
+```bash
+curl --header "Content-Type: application/json" \
+  --request DELETE \
+  http://localhost:3000/survivor/[id] # local URL - id stands for the user ID who will be deleted
+```
+
+## Trading Items
+
+**_Path: /survivor/trade_**
+
+```bash
+curl --header "Content-Type: application/json" \
+  --request PUT \
+  --data '{
+            "s1": {
+              "id": "[first user id]",
+              "items": [
+                {"name":"food", "qtd": 1},
+                {"name":"medication", "qtd": 1}
+              ]
+            },
+
+            "s2": {
+              "id": "[second user id]",
+              "items": [
+                {"name":"water", "qtd": 1},
+                {"name":"ammunition", "qtd": 1}
+              ]
+            }
+
+          }' \
+  http://localhost:3000/survivor/trade # local URL
+
+```
+
+## Reporting a Infected Survivor
+
+**_Path: /survivor/infection-alert_**
+
+```bash
+curl --header "Content-Type: application/json" \
+  --request PUT \
+  --data '{
+            "informant": "[id of the informant]",
+            "infected": "[id of the infected survivor]"
+          }' \
+  http://localhost:3000/survivor/infection-alert # local URL
+
+```
+
+## Getting the reports
+
+```bash
+curl --header "Content-Type: application/json" \
+  --request GET \
+  http://localhost:3000/reports # local URL
 
 ```
 
